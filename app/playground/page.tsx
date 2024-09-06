@@ -3,6 +3,9 @@
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { useRef } from "react"
+import { Draggable } from "gsap/Draggable"
+
+gsap.registerPlugin(Draggable)
 
 export default function Playground() {
   const container = useRef<HTMLDivElement>(null)
@@ -18,11 +21,26 @@ export default function Playground() {
       force3D: true
     })
 
+    Draggable.create('.box-free-drag', {
+      bounds: '.container',
+      inertia: true,
+    })
+
+    Draggable.create('.box-x-drag', {
+      type: 'x',
+      bounds: '.container'
+    })
+
+    Draggable.create('.box-rotation-drag', {
+      type: 'rotation',
+      bounds: '.container'
+    })
+
     const tl = gsap.timeline({ paused: true })
 
     tl.to('.box-timeline-0', { x: 400, duration: 1 })
     tl.to('.box-timeline-1', { x: 400, duration: 0.7 })
-    tl.to('.box-timeline-2', { x: 400, duration: 1 })
+    tl.to('.box-timeline-2', { x: 400, duration: 1, delay: 0.5 })
 
     const playTimeline = () => {
       if (tl.progress() < 1) {
@@ -75,24 +93,45 @@ export default function Playground() {
         </div>
       </div>
 
-      <div className="flex gap-4">
-        {new Array(5).fill("").map((_, index) => (
-          <div key={index} onClick={onClickStagger} className="box-stagger px-5 py-3 rounded bg-purple-400 text-white opacity-0">
-            {index}
-          </div>
-        ))}
+      <div>
+        <h3>Stagger</h3>
+        <div className="flex gap-4">
+          {new Array(5).fill("").map((_, index) => (
+            <div key={index} onClick={onClickStagger} className="box-stagger px-5 py-3 rounded bg-purple-400 text-white opacity-0">
+              {index}
+            </div>
+          ))}
+        </div>
       </div>
       
-      <div className="flex flex-col gap-4">
-        {new Array(3).fill("").map((_, index) => (
-          <div key={index} className={`box-timeline-${index} px-5 py-3 rounded bg-orange-400 text-white`}>
-            {index}
-          </div>
-        ))}
+      <div className="flex flex-col items-start gap-4">
+        <h3>Timeline</h3>
+        <div className="flex flex-col gap-4">
+          {new Array(3).fill("").map((_, index) => (
+            <div key={index} className={`box-timeline-${index} px-5 py-3 rounded bg-orange-400 text-white`}>
+              {index}
+            </div>
+          ))}
+        </div>
+        <button id="play-timeline-button" className="border border-slate-950 py-2 px-4 rounded">
+          Play
+        </button>
       </div>
-      <button id="play-timeline-button" className="border border-slate-950 py-2 px-4 rounded">
-        Play
-      </button>
+
+      <div className="w-full">
+        <h3>Draggable</h3>
+        <div className="container w-full flex flex-col items-start gap-4 h-[300px] bg-slate-200">
+          <div className="box-free-drag px-5 py-3 rounded bg-lime-400 text-white">
+            free drag
+          </div>
+          <div className="box-x-drag px-5 py-3 rounded bg-green-400 text-white">
+            x drag
+          </div>
+          <div className="box-rotation-drag px-5 py-3 rounded bg-emerald-400 text-white">
+            rotation drag
+          </div>
+        </div>
+      </div>
     </main>
   )
 }
