@@ -17,6 +17,28 @@ export default function Playground() {
       ease: "sine.out", 
       force3D: true
     })
+
+    const tl = gsap.timeline({ paused: true })
+
+    tl.to('.box-timeline-0', { x: 400, duration: 1 })
+    tl.to('.box-timeline-1', { x: 400, duration: 0.7 })
+    tl.to('.box-timeline-2', { x: 400, duration: 1 })
+
+    const playTimeline = () => {
+      if (tl.progress() < 1) {
+        tl.play()
+      } else {
+        tl.restart()
+      }
+    }
+
+    const playTimelineButton = document.getElementById('play-timeline-button')
+
+    playTimelineButton?.addEventListener('click', playTimeline)
+
+    return () => {
+      playTimelineButton?.removeEventListener('click', playTimeline)
+    }
   }, { scope: container })
 
   const { contextSafe } = useGSAP({ scope: container })
@@ -52,6 +74,7 @@ export default function Playground() {
           transform x on click
         </div>
       </div>
+
       <div className="flex gap-4">
         {new Array(5).fill("").map((_, index) => (
           <div key={index} onClick={onClickStagger} className="box-stagger px-5 py-3 rounded bg-purple-400 text-white opacity-0">
@@ -59,6 +82,17 @@ export default function Playground() {
           </div>
         ))}
       </div>
+      
+      <div className="flex flex-col gap-4">
+        {new Array(3).fill("").map((_, index) => (
+          <div key={index} className={`box-timeline-${index} px-5 py-3 rounded bg-orange-400 text-white`}>
+            {index}
+          </div>
+        ))}
+      </div>
+      <button id="play-timeline-button" className="border border-slate-950 py-2 px-4 rounded">
+        Play
+      </button>
     </main>
   )
 }
